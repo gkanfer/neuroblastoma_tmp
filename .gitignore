@@ -1,0 +1,22 @@
+# large data
+*.h5ad
+*.h5
+*.zarr/
+*.tif
+*.tiff
+*.loom
+*.gz
+*.zip
+*.pkl
+
+# outputs
+figures/
+data_in/
+tables/
+logs/
+
+# python
+__pycache__/
+.ipynb_checkpoints/
+*.pyc
+
