@@ -10,6 +10,14 @@
 *.pkl
 *.pdf
 *.png
+*.out
+*.e
+*.parquet
+*.gmt
+*.out
+*.o
+*.html
+*.rnk
 
 # outputs
 figures/
