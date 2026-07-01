@@ -18,7 +18,7 @@ import h5py
 import os
 
 pathout = '/data/HiTIF/data/spatialomics/neuroblastoma/data/andata_orig'
-pathdict = '/data/HiTIF/data/spatialomics/neuroblastoma/data/misc'
+pathdict = '/data/HiTIF/data/spatialomics/neuroblastoma/data/misc/res07'
 
 pathout = "/data/HiTIF/data/spatialomics/neuroblastoma/data/andata_orig"
 fn = os.path.join(pathout, "adata_nb_processed.h5ad")
@@ -47,20 +47,19 @@ sq.gr.spatial_neighbors(
     library_key="punch_id",
     coord_type="generic",
     delaunay=False,
-    radius=30,
+    radius=10,
 )
 andata.obsp["spatial_connectivities"] = sl.distance2connectivity(
     andata.obsp["spatial_distances"]
 )
 
 
-sl.spatialleiden(andata,layer_ratio=1.0, directed=(False, False), seed=seed, key_added="spatialleiden_resolution_1")
+sl.spatialleiden(andata,resolution = (0.7,0.7), layer_ratio=1.0, directed=(False, False), seed=seed, key_added="spatialleiden_resolution_1")
+sl.spatialleiden(andata,resolution = (0.7,0.7), layer_ratio=1.3, directed=(False, False), seed=seed, key_added="spatialleiden_resolution_1_3")
+sl.spatialleiden(andata,resolution = (0.7,0.7), layer_ratio=1.5, directed=(False, False), seed=seed, key_added="spatialleiden_resolution_1_5")
+sl.spatialleiden(andata,resolution = (0.7,0.7), layer_ratio=1.8, directed=(False, False), seed=seed, key_added="spatialleiden_resolution_1_8")
 
-sl.spatialleiden(andata, layer_ratio=1.3, directed=(False, False), seed=seed, key_added="spatialleiden_resolution_1_3")
 
-sl.spatialleiden(andata, layer_ratio=1.5, directed=(False, False), seed=seed, key_added="spatialleiden_resolution_1_5")
-
-sl.spatialleiden(andata, layer_ratio=1.8, directed=(False, False), seed=seed, key_added="spatialleiden_resolution_1_8")
 
 
 import pickle
@@ -69,14 +68,14 @@ dict_1_3 = dict(zip(andata.obs["cell_id"], andata.obs['spatialleiden_resolution_
 dict_1_5 = dict(zip(andata.obs["cell_id"], andata.obs['spatialleiden_resolution_1_5'].astype(str)))
 dict_1_8 = dict(zip(andata.obs["cell_id"], andata.obs['spatialleiden_resolution_1_8'].astype(str)))
 
-with open(os.path.join(pathdict, "stlieden_1.pkl"), "wb") as f:
+with open(os.path.join(pathdict, "stlieden_ratio1p0_10radius.pkl"), "wb") as f:
     pickle.dump(dict_1, f)
 
-with open(os.path.join(pathdict, "stlieden_1_3.pkl"), "wb") as f:
+with open(os.path.join(pathdict, "stlieden_ratio1p3_10radius.pkl"), "wb") as f:
         pickle.dump(dict_1_3, f)
 
-with open(os.path.join(pathdict, "stlieden_1_5.pkl"), "wb") as f:
+with open(os.path.join(pathdict, "stlieden_ratio1p5_10radius.pkl"), "wb") as f:
     pickle.dump(dict_1_5, f)
     
-with open(os.path.join(pathdict, "stlieden_1_8.pkl"), "wb") as f:
+with open(os.path.join(pathdict, "stlieden_ratio1p8_10radius.pkl"), "wb") as f:
     pickle.dump(dict_1_8, f)    
