@@ -21,7 +21,10 @@ class PunchPlotter:
         xmin, xmax = extent["x"]
         ymin, ymax = extent["y"]
 
-        sdata_cropped = self.sdata.query.bounding_box(
+        element_names = [self.element_name, "morphology_focus", "cell_labels", "table"]
+        sdata_plot = self.sdata.subset(element_names, filter_tables=False)
+
+        sdata_cropped = sdata_plot.query.bounding_box(
             min_coordinate=[xmin, ymin],
             max_coordinate=[xmax, ymax],
             axes=("x", "y"),
@@ -29,13 +32,46 @@ class PunchPlotter:
         )
         return sdata_cropped
     
-    def plot_punch(self, colname, colname_map, palette=None, dpi=100):
+    def plot_punch(
+        self,
+        colname,
+        colname_map,
+        palette=None,
+        dpi=100,
+        active_labels=None,
+        inactive_value=float("nan"),
+        figsize=(10, 10),
+        title=" ",
+        legend_loc="default",
+        show=True,
+        save_path=None,
+        save_tight=False,
+    ):
         self.sdata_crop["table"].obs[colname] = self.sdata_crop["table"].obs["cell_id"].map(colname_map)
+        if active_labels is not None:
+            active_labels = list(active_labels)
+            is_active = self.sdata_crop["table"].obs[colname].isin(active_labels)
+            self.sdata_crop["table"].obs[colname] = self.sdata_crop["table"].obs[colname].where(is_active, inactive_value)
         self.sdata_crop["table"].obs[colname] = self.sdata_crop["table"].obs[colname].astype("category")
 
         plt.style.use("dark_background")
-        ax = self.sdata_crop.pl.render_images(element="morphology_focus", channel='DAPI',cmap= 'grey', colorbar=False).pl.render_labels("cell_labels", color=colname, palette=palette).pl.show(coordinate_systems="global",title=f" ",figsize=(10, 10),dpi = self.dpi,na_in_legend=False,legend_loc = self.legend_loc,return_ax=True)
+        if legend_loc == "default":
+            legend_loc = self.legend_loc
+        groups = None
+        render_palette = palette
+        if palette is not None:
+            groups = active_labels if active_labels is not None else list(palette.keys())
+            if isinstance(palette, dict):
+                render_palette = [palette[label] for label in groups]
+        ax = self.sdata_crop.pl.render_images(element="morphology_focus", channel='DAPI',cmap= 'grey').pl.render_labels("cell_labels", color=colname, groups=groups, palette=render_palette).pl.show(coordinate_systems="global",title=title,figsize=figsize,dpi = self.dpi,na_in_legend=False,legend_loc = legend_loc,colorbar=False,return_ax=True)
         if self.axis_off:
             ax.set_axis_off()
-        plt.show()
+        if save_path is not None:
+            if save_tight:
+                ax.figure.savefig(save_path, dpi=dpi, bbox_inches="tight", pad_inches=0.02)
+            else:
+                ax.figure.savefig(save_path, dpi=dpi)
+        if show:
+            plt.show()
+        return ax
         
