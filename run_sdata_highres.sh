@@ -8,6 +8,9 @@
 
 #SBATCH --mail-type=ALL
 
-source myconda_v1
-mamba activate spatialdata_env
-python run_sdata_highres_v1.py
+# source myconda_v1
+# mamba activate spatialdata_env
+# python
+
+/data/kanferg/conda_v1/envs/spatialdata_env/bin/python run_sdata_highres_v1.py
+
