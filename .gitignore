@@ -24,6 +24,10 @@ figures/
 data_in/
 tables/
 logs/
+ref_notebooks/
+lymphoid_subclusters_v2/
+myeloid_subclusters_v2/
+
 
 # python
 __pycache__/
